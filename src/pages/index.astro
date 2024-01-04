@@ -1,0 +1,274 @@
+---
+	// @ts-nocheck
+
+	import Layout from '../layouts/Layout.astro';
+
+	import { handleAuth, fetchStreams, fetchClips } from '../lib/twitch';
+
+	const query = Astro.url.searchParams;
+	const error = query.get('error');
+
+	const auth = await handleAuth();
+
+	const game_id = 1517558459; // American Arcadia
+
+	const streams = await fetchStreams(auth, game_id);
+	// const videos = await fetchVideos(auth, game_id);
+	const clips = await fetchClips((Astro.locals as any).runtime);
+
+	const errors: {
+		[key: string]: string;
+	} = {
+		offline: 'The cam is now offline for maintenance, try a different one',
+	}
+
+	const coolDate = (date: string) => {
+		const d = new Date(date);
+		const now = new Date();
+		const diff = now.getTime() - d.getTime();
+		const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+		const hours = Math.floor(diff / (1000 * 60 * 60));
+		const minutes = Math.floor(diff / (1000 * 60));
+		const seconds = Math.floor(diff / (1000));
+
+		if (days > 0) {
+			return `${days} days ago`;
+		} else if (hours > 0) {
+			return `${hours} hours ago`;
+		} else if (minutes > 0) {
+			return `${minutes} minutes ago`;
+		} else if (seconds > 0) {
+			return `${seconds} seconds ago`;
+		} else {
+			return 'just now';
+		}
+	}
+---
+
+<Layout title="American Arcadia • Live">
+	<main>
+		{error && (
+			<div class="error">
+				{errors[error]}
+			</div>
+		)}
+		{streams.data.length > 0 && (
+			<h1>Streams</h1>
+			<div class="streams">
+				{streams.data.map((stream: any) => (
+					<a href={`/cam-${stream.user_id}`} class="block">
+						<img src={stream.thumbnail_url.replace('{width}', 320).replace('{height}', 180)}></img>
+						<di class="channel-info">
+							<img src={`https://avatar.gamesight.io/twitch/${stream.user_id}-60x60`} width="50" height="50" />
+							<div class="title">{stream.title}</div>
+							<div class="channel">{stream.user_name}</div>
+						</a>
+					</>
+				))}
+			</div>
+		)}
+
+		{clips.length > 0 && (
+			<h1>Clips <code>last 7 days</code> <code>limit: 50</code> <code data-tippy-content="Clips created within 10 seconds of each other are classed as duplicates"><i class="fa-regular fa-circle-info"></i> duplicates omitted</code></h1>
+			<div class="clips">
+				{clips.map((clip: any) => (
+					<a href={`/clip-${clip.id}`} class="block">
+						<img src={clip.thumbnail_url}></img>
+						<div class="channel-info">
+							<img src={`https://avatar.gamesight.io/twitch/${clip.broadcaster_id}-60x60`} width="50" height="50" />
+							<div class="title" data-tippy-content={clip.title}>{clip.title}</div>
+							<div class="channel">{clip.broadcaster_name}</div>
+							<div class="clipper">Clipped by {clip.creator_name} &bullet; {coolDate(clip.created_at)}</div>
+						</div>
+					</a>
+				))}
+			</div>
+		)}
+	</main>
+</Layout>
+
+<script>
+	import tippy from 'tippy.js';
+	import 'tippy.js/dist/tippy.css'; // optional for styling
+
+	tippy('[data-tippy-content]');
+</script>
+
+<style>
+	@keyframes slide-in {
+		to {
+			transform: translateY(0);
+		}
+	}
+
+	main {
+		padding: 3rem 3rem 1rem 3rem;
+	}
+
+	h1 {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+
+		code {
+			background: #4e546a;
+			color: #ffae00;
+			padding: 0.25rem 0.5rem;
+			border-radius: 5px;
+			font-size: 14px;
+			font-weight: bold;
+		}
+	}
+
+	.error {
+		background: #fd5c02;
+		color: #fff;
+		padding: 1rem;
+		border-radius: 20px;
+		font-size: 24px;
+		font-weight: bold;
+		text-align: center;
+	}
+	.streams, .videos, .clips {
+		position: relative;
+		display: grid;
+		grid-template-columns: repeat(5, 1fr);
+		gap: 30px 15px;
+		overflow: clip;
+
+		& .block {
+			--_offset: 400px;
+			--_range-start: -25%;
+			--_range-end: 2%;
+			
+			color: inherit;
+			text-decoration: none;
+			
+			animation: slide-in linear forwards;
+			animation-timeline: view(block 25%);
+			animation-range: var(--_range-start) var(--_range-end);
+
+			@supports (animation-timeline: view()) {
+				transform: translateY(100%);
+			}
+
+			& img {
+				width: calc(100% - 4px);
+				aspect-ratio: 16 / 9;
+				object-fit: cover;
+				object-position: center;
+				border: 2px solid #4e546a;
+				border-radius: 20px;
+			}
+
+			& .channel-info {
+				display: grid;
+				grid-template-areas: 
+					"avatar title"
+					"avatar channel"
+					"avatar clipper";
+				grid-template-columns: 60px 1fr;
+				gap: 6px 12px;
+				padding: 5px 10px;
+
+				& img {
+					grid-area: avatar;
+					width: 60px;
+					height: 60px;
+					border-radius: 50%;
+					border: 2px solid #4e546a;
+				}
+				
+				& .title {
+					grid-area: title;
+					font-size: 22px;
+					line-height: 1.2;
+					font-weight: bold;
+					white-space: nowrap;
+					overflow: hidden;
+					text-overflow: ellipsis;
+					color: #ffae00;
+					text-transform: uppercase;
+				}
+
+				& .channel {
+					grid-area: channel;
+					font-size: 14px;
+					line-height: 1.2;
+					color: #ffae00;
+				}
+				
+				& .clipper {
+					grid-area: clipper;
+					font-size: 14px;
+					line-height: 1.2;
+					color: #ffae00;
+				}
+			}
+		}
+	}
+
+	@media (width >= 1301px) {
+		.streams, .videos, .clips {
+			grid-template-columns: repeat(5, 1fr);
+
+			& .block {
+				&:nth-child(5n+5) {
+					--_offset: 0px;
+					--_range-start: -5%;
+					--_range-end: 10%;
+				}
+				&:nth-child(5n+4) {
+					--_offset: 100px;
+					--_range-start: -10%;
+					--_range-end: 8%;
+				}
+				&:nth-child(5n+3) {
+					--_offset: 200px;
+					--_range-start: -15%;
+					--_range-end: 6%;
+				}
+				&:nth-child(5n+2) {
+					--_offset: 300px;
+					--_range-start: -20%;
+					--_range-end: 4%;
+				}
+			}
+		}
+	}
+
+	@media (width >= 769px) and (width <= 1300px) {
+		.streams, .videos, .clips {
+			grid-template-columns: repeat(3, 1fr);
+
+			& .block {
+				&:nth-child(3n+3) {
+					--_offset: 100px;
+					--_range-start: -15%;
+					--_range-end: 10%;
+				}
+				&:nth-child(3n+2) {
+					--_offset: 200px;
+					--_range-start: -20%;
+					--_range-end: 6%;
+				}
+			}
+		}
+	}
+
+	@media (width <= 768px) {
+		h1 {
+			text-align: center;
+		}
+
+		.streams, .videos, .clips {
+			grid-template-columns: repeat(1, 1fr);
+
+			& .block {
+				--_offset: 0px;
+				--_range-start: -5%;
+				--_range-end: 9%;
+			}
+		}
+	}
+</style>

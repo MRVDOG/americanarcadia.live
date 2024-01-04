@@ -1,0 +1,30 @@
+{
+  "name": "americanarcadia.live",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "infisical:dev": "infisical run --env=dev -- astro dev",
+    "infisical:build": "astro check && infisical run --env=prod -- astro build",
+    "infisical:preview": "infisical run --env=staging -- astro preview"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.3.3",
+    "@astrojs/cloudflare": "^8.0.0",
+    "@clerk/clerk-js": "^4.67.0",
+    "@clerk/clerk-sdk-node": "^4.13.2",
+    "@twurple/auth": "^7.0.6",
+    "@twurple/chat": "^7.0.6",
+    "astro": "^4.0.6",
+    "nanostores": "^0.9.5",
+    "tippy.js": "^6.3.7",
+    "typescript": "^5.3.3"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20231218.0"
+  }
+}

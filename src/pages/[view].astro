@@ -1,0 +1,26 @@
+---
+  import Layout from "../layouts/Layout.astro";
+  import Clip from "../components/views/Clip.astro";
+  import Video from "../components/views/Video.astro";
+  import Stream from "../components/views/Stream.astro";
+
+  const { view } = Astro.params;
+
+  const [type, id] = view!.split(/-(.+)/);
+---
+
+<Layout title="American Arcadia • Live">
+  <main>
+    {type === "clip" && ( <Clip id={id} /> )}
+    {type === "vod" && ( <Video id={id} /> )}
+    {type === "cam" && ( <Stream id={id} /> )}
+  </main>
+</Layout>
+
+<style>
+  main {
+    flex: 1;
+    padding: 30px 16px 0 16px;
+    margin-bottom: -94px;
+  }
+</style>

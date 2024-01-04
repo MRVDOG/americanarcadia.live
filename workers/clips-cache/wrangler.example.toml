@@ -1,0 +1,17 @@
+
+name = "worker-name"
+type = "javascript"
+account_id = "account-id"
+workers_dev = true
+main = "src/index.js"
+compatibility_date = "2023-11-09"
+
+[triggers]
+# Schedule cron triggers:
+# - every 3 hours
+crons = ["0 */3 * * *"]
+
+[[d1_databases]]
+binding = "DATABASE" # available in your Worker on env.DATABASE
+database_name = "database-name"
+database_id = "database-id"

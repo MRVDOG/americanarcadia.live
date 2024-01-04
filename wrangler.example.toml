@@ -1,0 +1,9 @@
+name = "project-name"
+account_id = "account-id"
+compatibility_date = "2023-11-09"
+
+[[d1_databases]]
+binding = "DATABASE" # available in your Worker on env.DATABASE
+database_name = "database-name"
+database_id = "database-id"
+preview_database_id = "DATABASE" # Required for Pages local development

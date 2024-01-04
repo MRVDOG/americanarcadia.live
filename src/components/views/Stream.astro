@@ -1,0 +1,280 @@
+---
+  import SignedIn from '../../components/clerk/SignedIn.astro';
+
+  import { handleAuth, fetchStream } from '../../lib/twitch';
+
+  const { id } = Astro.props;
+
+  const auth = await handleAuth();
+
+  const {data} = await fetchStream(auth, id);
+
+  const stream = data[0];
+---
+
+{ stream ? (
+  <section>
+    <div class="player" id="player"></div>
+
+    <div class="chat">
+      <iframe
+        id="chat_embed"
+        src={`https://nightdev.com/hosted/obschat?theme=s0n0s_1080&channel=${stream.user_login}&fade=false&bot_activity=true&prevent_clipping=false`}
+        height="100%"
+        width="100%" />
+    </div>
+
+    <div class="viewer-count">
+      <div class="inner">{ stream.viewer_count }</div>
+    </div>
+
+    <SignedIn>
+      <div class="chat-input">
+        <i class="fa-sharp fa-solid fa-plus"></i>
+        <textarea placeholder="Send a message" data-gramm="false" data-gramm_editor="false" data-enable-grammarly="false" />
+        <button>Send</button>
+      </div>
+    </SignedIn>
+    
+    <script define:vars={{ channel: stream.user_login, stream }}>
+      const chatInput = document.querySelector('.chat-input');
+      const button = chatInput.querySelector('button');
+      const textarea = chatInput.querySelector('textarea');
+
+      const chat = async () => {
+        const message = textarea.value;
+
+        if (!message) return;
+
+        textarea.value = '';
+
+        await fetch(`/api/chat/${stream.user_id}`, {
+          method: 'POST',
+          body: JSON.stringify({
+            message
+          })
+        });
+      };
+
+      button.addEventListener('click', chat);
+      textarea.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          chat();
+        }
+      });
+
+      const init = () => {
+        new Twitch.Player("player", {
+          channel,
+          width: "100%",
+          height: "100%",
+          autoplay: true,
+          muted: false,
+          playsinline: true,
+          controls: true,
+          allowfullscreen: false,
+          parent: ["americanarcadia.live", "tunnel-alpha.mrv.dog"]
+        });
+
+        // poll for viewer count every 10 seconds
+        const fetchStats = async () => {
+          fetch(`/api/streams/${stream.user_id}/stats.json`)
+            .then(res => res.json())
+            .then((stats) => {
+              if(!stats.still_playing) {
+                window.location.href = '/?error=offline';
+              }
+
+              const count = stats.viewer_count.toLocaleString();
+              document.querySelector('.viewer-count .inner').innerText = count;
+            });
+        };
+
+        fetchStats();
+        setInterval(() => {
+          fetchStats();
+        }, 10000);
+      };
+
+      (async () => {
+        if (window.Twitch) return;
+        const interval = setInterval(() => {
+          if (window.Twitch) {
+            clearInterval(interval);
+            init();
+          }
+        }, 100);
+      })();
+    </script>
+  </section>
+) : (
+  <meta http-equiv="refresh" content="0; url=/?error=offline" />
+) }
+
+<style>
+  section {
+    flex: 1;
+    display: grid;
+    grid-template-areas: "player chat" "viewer-count chat-input";
+    grid-template-rows: auto 1fr;
+    grid-template-columns: 1fr 371px;
+    height: calc(100% - 10px);
+    width: 100%;
+    overflow: hidden;
+    
+    & .player {
+      grid-area: player;
+      width: 100%;
+      max-height: calc(100vh - 230px);
+      margin: 0 auto;
+      aspect-ratio: 16 / 9;
+      border-radius: 30px;
+      overflow: hidden;
+      border: 2px solid #4e546a;
+    }
+  
+    & .chat {
+      grid-area: chat;
+      height: calc(100% - 35px);
+      width: 100%;
+      padding: 20px;
+      & iframe {
+        border: none;
+      }
+    }
+  
+    & .viewer-count {
+      margin-left: auto;
+      width: 200px;
+      grid-area: viewer-count;
+      position: relative;
+      z-index: 120;
+      display: flex;
+      align-items: start;
+      justify-content: flex-end;
+      color: #e02945;
+      font-size: 23px;
+      text-align: center;
+      padding: 20px;
+      
+      & .inner {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        /* red circle */
+        &::before {
+          display: block;
+          content: "";
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          background-color: #e02945;
+        }
+      }
+    }
+
+    & .chat-input {
+      grid-area: chat-input;
+      position: relative;
+      z-index: 120;
+      box-sizing: border-box;
+      margin-left: auto;
+      width: calc(100% - 25px);
+      height: 107px;
+      border-radius: 30px;
+      background: #20222f;
+      padding: 20px 20px 45px 45px;
+
+      &:focus-within {
+        outline: 2px solid #4e546a;
+        outline-offset: -2px;
+      }
+
+      &:has(:disabled) {
+        cursor: not-allowed;
+
+        & * {
+          cursor: not-allowed;
+        }
+      }
+
+      & svg {
+        position: absolute;
+        top: 20px;
+        left: 15px;
+        width: 20px;
+        height: 20px;
+      }
+
+      & textarea {
+        outline: none;
+        width: 100%;
+        height: 100%;
+        border: none;
+        background: transparent;
+        font-size: 14px;
+        resize: none;
+        color: #fff;
+      }
+
+      & button {
+        position: absolute;
+        bottom: 15px;
+        right: 15px;
+        background: transparent;
+        border: none;
+        color: #fff;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+      }
+
+      &.disabled {
+        cursor: not-allowed;
+
+        & * {
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+
+  @media (width <= 1024px) {
+    section {
+      flex: 1;
+      padding-top: 30px;
+      height: calc(100% - 100px);
+      grid-template-areas: "player" "viewer-count" "chat" "chat-input";
+      grid-template-columns: 1fr;
+      grid-template-rows: auto 35px 1fr 152px;
+
+      & .player {
+        width: calc(100% - 4px);
+        border-radius: 20px;
+      }
+
+      & .chat {
+        height: 100%;
+        width: 100%;
+        padding: 0;
+      }
+
+      & .viewer-count {
+        justify-content: center;
+        padding: 0;
+        width: calc(100% - 4px);
+      }
+
+      & .chat-input {
+        position: relative;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        width: calc(100% - 4px);
+      }
+    }
+  }
+</style>

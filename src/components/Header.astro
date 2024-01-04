@@ -1,0 +1,109 @@
+<header>
+  <div class="lines"></div>
+  <a href="/" class="logo-wrapper">
+    <img src="/img/test6.png" alt="" class="logo">
+    <div class="live">LIVE</div>
+  </a>
+</header>
+
+<style>
+  @font-face {
+		font-family: 'Grandmas Television';
+		src: url("/fonts/grandmas_television.otf") format("opentype");
+		font-weight: normal;
+		font-style: normal;
+		font-display: swap;
+	}
+
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 83px;
+    width: 100%;
+    max-width: 1530px;
+    margin: 0 auto;
+    background-image: var(--gradient-alpha);
+    background-position: top left;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: 100vw 100vh;
+    -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+    
+    & .lines {
+      position: absolute;
+      top: 64px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100dvw;
+      height: 3px;
+      background-color: #ffc501;
+      box-shadow: 0px 4px 0px 0px #ffae00, 0px 8px 0px 0px #fd5c02, 0px 12px 0px 0px #ff4231, 0px 16px 0px 0px #c1452c;
+    }
+  
+    & .logo-wrapper {
+      position: absolute;
+      right: 67px;
+      top: 30px;
+      transition: all 0.3s ease-in-out;
+      
+      &:hover {
+        /* glow */
+        filter: drop-shadow(0px 0px 10px #ff4231) drop-shadow(0px 0px 10px #ff4231)
+      }
+
+      & .logo {
+        width: 252px;
+      }
+    
+      & .live {
+        position: absolute;
+        top: calc(100% - 1px);
+        right: 0px;
+        width: 80px;
+        height: 20px;
+        color: #f5e1c6;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: 'Grandmas Television';
+        font-size: 16px;
+        font-weight: bold;
+        letter-spacing: 0.18em;
+
+        &:before {
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: -8px;
+          transform: translateY(-50%);
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background-color: #ff4231;
+        }
+      }
+    }
+  }
+
+  @media (width >= 1530px) and (width <= 2050px) {
+    header {
+      max-width: 2050px;
+    }
+  }
+  
+  @media (width <= 768px) {
+    header {
+      max-width: 100%;
+
+      & .logo-wrapper {
+        right: 50%;
+        transform: translateX(50%);
+      }
+    }
+  }
+</style>

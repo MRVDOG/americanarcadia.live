@@ -1,0 +1,218 @@
+---
+  import UserButton from '../components/clerk/UserButton.astro';
+  import SignedIn from '../components/clerk/SignedIn.astro';
+  import SignedOut from '../components/clerk/SignedOut.astro';
+  import SignInButton from '../components/clerk/SignInButton.astro';
+
+  import NotificationIcon from '../components/icons/NotificationIcon.astro';
+  import SettingsIcon from '../components/icons/SettingsIcon.astro';
+  import UserIcon from '../components/icons/UserIcon.astro';
+---
+
+<footer>
+  <div class="user">
+      <SignedIn>
+        <div class="account">
+          <!-- <div class="badge"></div> -->
+          <div class="icon">
+            <UserButton />
+          </div>
+        </div>
+      </SignedIn>
+      <SignedOut>
+        <SignInButton>
+          <div class="account">
+            <!-- <div class="badge"></div> -->
+            <div class="icon">
+              <UserIcon />
+            </div>
+          </div>
+        </SignInButton>
+      </SignedOut>
+    </div>
+    <SignedIn>
+      <div class="notifications">
+        <!-- <div class="badge"></div> -->
+        <div class="icon">
+          <NotificationIcon />
+        </div>
+      </div>
+      <div class="settings">
+        <!-- <div class="badge"></div> -->
+        <div class="icon">
+          <SettingsIcon />
+        </div>
+      </div>
+    </SignedIn>
+  </div>
+  <div class="footer">
+    Fan Project by <a href="https://mrv.dog" target="_blank">MRVDOG</a> - Not affiliated with the American Arcadia Game
+  </div>
+</footer>
+
+<style>
+  footer {
+    box-sizing: border-box;
+    position: sticky;
+    bottom: 0;
+    z-index: 100;
+    width: 100%;
+    min-height: 100px;
+    max-width: 1530px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    padding: 0 52px;
+    background-image: var(--gradient-alpha);
+    background-position: top left;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: 100vw 100vh;
+
+    &::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 150px;
+      -webkit-backdrop-filter: blur(10px);
+              backdrop-filter: blur(20px);
+      -webkit-mask-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) 70%, rgba(0, 0, 0, 1));
+              mask-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) 70%, rgba(0, 0, 0, 1));
+      z-index: -1;
+    }
+
+    & .user {
+      display: flex;
+      align-items: center;
+
+      & .account {
+        position: relative;
+        width: 54px;
+        height: 54px;
+        border-radius: 50%;
+        margin-right: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        & .badge {
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          background-color: #4cc9b9;
+          position: absolute;
+          top: 2px;
+          right: 2px;
+        }
+
+        & .icon {
+          width: 54px;
+          height: 48px;
+          background-color: #5d6d82;
+          border: 2px solid #66778b;
+          border-radius: 50%;
+          display: grid;
+          place-items: center;
+          padding-bottom: 2px;
+        }
+
+        &:has(.badge) {
+          & .icon {
+            -webkit-mask-image: radial-gradient(circle at calc(100% - 7.1px) 7.2px, transparent 0, transparent 7px, white 8px);
+                    mask-image: radial-gradient(circle at calc(100% - 7.1px) 7.2px, transparent 0, transparent 7px, white 8px);
+          }
+        }
+        
+        &:hover {
+          background-color: #5c6c83;
+          cursor: pointer;
+        }
+      }
+    }
+
+    & .notifications, & .settings {
+      position: relative;
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 26px;
+
+      & .badge {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: #f34b3e;
+        position: absolute;
+        top: 16px;
+        right: 12px;
+      }
+
+      & .icon {
+        width: 100%;
+        height: 100%;
+        display: grid;
+        place-items: center;
+        color: #76879b;
+      }
+
+      &:has(.badge) {
+        & .icon {
+          -webkit-mask-image: radial-gradient(circle at calc(100% - 15.7px) 19.7px, transparent 0, transparent 6px, white 7px);
+                  mask-image: radial-gradient(circle at calc(100% - 15.7px) 19.7px, transparent 0, transparent 6px, white 7px);
+        }
+      }
+
+      
+      &:hover {
+        background-color: #5c6c83;
+        cursor: pointer;
+
+        & .icon {
+          color: #fff;
+        }
+      }
+    }
+
+    & .footer {
+      position: fixed;
+      bottom: 5px;
+      left: 0;
+      right: 0;
+      font-size: 12px;
+      color: #ffc501;
+      text-align: center;
+
+      & a {
+        color: #fd5c02;
+        text-decoration: none;
+        font-weight: 600;
+      }
+    }
+  }
+
+  @media (width >= 1530px) and (width <= 2050px) {
+    footer {
+      max-width: 2050px;
+    }
+  }
+
+  @media (width <= 768px) {
+    footer {
+      padding: 0 24px 10px 24px;
+
+      & .user {
+        width: 100%;
+        justify-content: space-evenly;
+
+        & .account, & .notifications, & .settings {
+          margin-right: 0;
+        }
+      }
+    }
+  }
+</style>

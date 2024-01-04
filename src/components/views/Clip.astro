@@ -1,0 +1,132 @@
+---
+  import { handleAuth, fetchClip } from '../../lib/twitch';
+
+  const { id } = Astro.props;
+
+  const auth = await handleAuth();
+  const {data} = await fetchClip(auth, id);
+  const clip = data[0];
+---
+
+<section>
+  <video controls>
+    <source src={ clip.thumbnail_url.replace('-preview-480x272.jpg', '.mp4') } type="video/mp4" />
+  </video>
+  <div class="info">
+    <div class="title">{ clip.title }</div>
+    <div class="channel">{ clip.broadcaster_name }</div>
+    <div class="clipper">Clipped by { clip.creator_name }</div>
+  </div>
+  <div class="viewer-count">
+    <div class="inner">{ clip.view_count }</div>
+  </div>
+</section>
+
+<style>
+  section {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 371px;
+    grid-template-rows: auto 1fr;
+    grid-template-areas: "player info" "viewer-count info";
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+  
+    & video {
+      grid-area: player;
+      max-width: 100%;
+      max-height: calc(100vh - 230px);
+      margin: 0 auto;
+      aspect-ratio: 16 / 9;
+      border-radius: 30px;
+      overflow: hidden;
+      border: 2px solid #4e546a;
+    }
+
+    & .info {
+      grid-area: info;
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      & .title {
+        font-size: 22px;
+        line-height: 1.2;
+        font-weight: bold;
+        color: #ffae00;
+        text-transform: uppercase;
+      }
+
+      & .channel {
+        font-size: 14px;
+        line-height: 1.2;
+        color: #ffae00;
+      }
+      
+      & .clipper {
+        font-size: 14px;
+        font-size: 14px;
+        line-height: 1.2;
+        color: #ffae00;
+      }
+    }
+
+    & .viewer-count {
+      margin-left: auto;
+      width: 200px;
+      grid-area: viewer-count;
+      position: relative;
+      z-index: 120;
+      display: flex;
+      align-items: start;
+      justify-content: flex-end;
+      color: #e02945;
+      font-size: 23px;
+      text-align: center;
+      padding: 20px;
+      
+      & .inner {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        /* red circle */
+        &::before {
+          display: block;
+          content: "";
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          background-color: #e02945;
+        }
+      }
+    }
+  }
+
+  @media (width <= 1024px) {
+    section {
+      flex: 1;
+      padding-top: 30px;
+      height: calc(100% - 40px);
+      grid-template-areas: "player" "viewer-count" "info";
+      grid-template-columns: 1fr;
+      grid-template-rows: auto auto 1fr;
+      
+      & video {
+        width: calc(100% - 4px);
+        max-height: unset;
+        border-radius: 20px;
+      }
+
+      & .viewer-count {
+        justify-content: center;
+      }
+
+      & .info {
+        padding: 20px;
+      }
+   }
+  }
+</style>

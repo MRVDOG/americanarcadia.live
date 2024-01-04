@@ -1,0 +1,89 @@
+---
+  import { handleAuth, fetchVideo } from '../../lib/twitch';
+
+const { id } = Astro.props;
+
+const auth = await handleAuth();
+const {data} = await fetchVideo(auth, id);
+const video = data[0];
+---
+
+<section>
+<video controls>
+  <source src={ video.thumbnail_url.replace('-preview-480x272.jpg', '.mp4') } type="video/mp4" />
+</video>
+<div class="info">
+  <div class="title">{ video.title }</div>
+  <div class="channel">{ video.broadcaster_name }</div>
+</div>
+
+<div class="viewer-count">{ video.view_count }</div>
+</section>
+
+<style>
+section {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 371px;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+
+  & video {
+    height: 100%;
+    max-height: 900px;
+    aspect-ratio: 16/9;
+  }
+
+  & .info {
+    padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    & .title {
+      font-size: 22px;
+      line-height: 1.2;
+      font-weight: bold;
+      color: #ffae00;
+      text-transform: uppercase;
+    }
+
+    & .channel {
+      font-size: 14px;
+      line-height: 1.2;
+      color: #ffae00;
+    }
+    
+    & .clipper {
+      font-size: 14px;
+      font-size: 14px;
+      line-height: 1.2;
+      color: #ffae00;
+    }
+  }
+
+  & .viewer-count {
+    position: fixed;
+    bottom: 68px;
+    right: 450px;
+    z-index: 120;
+    color: #e02945;
+    font-size: 23px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    /* red circle */
+    &::before {
+      display: block;
+      content: "";
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background-color: #e02945;
+    }
+  }
+}
+</style>

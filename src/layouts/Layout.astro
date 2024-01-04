@@ -1,0 +1,170 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content="Watch streams and clips for the game American Arcadia - Fan project by @MR_VDOG, not affiliated with the American Arcadia Game" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.png" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+	</head>
+	<body>
+		<!-- <img src="https://www.xtgamer.de/wp-content/uploads/American_Arcadia_07.jpg" class="overlay" /> -->
+		<div class="page">
+			<Header />
+			<content>
+				<slot />
+			</content>
+			<Footer />
+		</div>
+
+		<script src="https://kit.fontawesome.com/48be745afa.js" crossorigin="anonymous"></script>
+		<script src="https://player.twitch.tv/js/embed/v1.js" is:inline></script>
+
+		<script>
+			import { initializeClerk } from '../lib/clerk'
+	    initializeClerk();
+		</script>
+		
+	</body>
+</html>
+<style is:global>
+	:root {
+		--gradient: linear-gradient(
+			120deg,
+			hsl(228 100% 9%) 0%,
+			hsl(209 27% 38%) 20%,
+			hsl(209 27% 38%) 40%,
+			hsl(228 100% 9%) 65%
+		);
+
+		--opacity: 70%;
+		--gradient-alpha: linear-gradient(
+			120deg,
+			hsl(228 100% 9% / var(--opacity)) 0%,
+			hsl(209 27% 38% / var(--opacity)) 20%,
+			hsl(209 27% 38% / var(--opacity)) 40%,
+			hsl(228 100% 9% / var(--opacity)) 65%
+		);
+	}
+
+	html {
+		font-family: system-ui, sans-serif;
+		margin: 0;
+		padding: 0;
+		width: 100dvw;
+		height: 100dvh;
+
+		& body {
+			margin: 0;
+			padding: 0;
+			width: 100%;
+			height: 100%;
+			display: flex;
+			flex-direction: column;
+			color: white;
+			overscroll-behavior: none;
+			overflow: hidden;
+
+			.hidden {
+				display: none !important;
+			}
+
+			.page {
+				width: 100%;
+				height: 100%;
+				overflow-x: clip;
+				overflow-y: auto;
+				overscroll-behavior: none;
+				background-image: var(--gradient);
+				background-position: top left;
+				background-repeat: no-repeat;
+				background-attachment: fixed;
+				background-size: 100vw 100vh;
+				display: flex;
+				flex-direction: column;
+			}
+
+			& content {
+				flex: 1;
+				display: flex;
+				flex-direction: column;
+				width: 100%;
+				max-width: 1530px;
+				margin: 0 auto;
+
+				@media (width >= 1530px) and (width <= 2050px) {
+					max-width: 2050px;
+				}
+			}
+
+			& .overlay {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				z-index: 150;
+				opacity: 0.3;
+				pointer-events: none;
+				object-fit: cover;
+				object-position: bottom left;
+			}
+
+			/* Clerk Stuff */
+
+			.cl-userButtonBox {
+				width: 100%;
+				height: 100%;
+
+				& .cl-userButtonTrigger {
+					width: 100%;
+					height: 100%;
+
+					& .cl-avatarBox {
+						width: 100%;
+						height: 100%;
+
+						& img {
+							width: 100%;
+							height: 100%;
+							border-radius: 50%;
+						}
+					}
+
+					&:focus {
+						box-shadow: #ffc501 0px 0px 0px 3px;
+					}
+				}
+			}
+		}
+
+		/* scrollbars */
+		::-webkit-scrollbar {
+			width: 3px;
+			height: 3px;
+		}
+
+		::-webkit-scrollbar-track {
+			background: none;
+		}
+
+		::-webkit-scrollbar-thumb {
+			background: #ffc501;
+		}
+
+		::-webkit-scrollbar-thumb:hover {
+			background: #fd5c02;
+		}
+	}
+</style>
