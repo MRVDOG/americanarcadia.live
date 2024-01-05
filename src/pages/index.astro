@@ -69,7 +69,7 @@
 		)}
 
 		{clips.length > 0 && (
-			<h1>Clips <code>last 7 days</code> <code>limit: 50</code> <code data-tippy-content="Clips created within 10 seconds of each other are classed as duplicates"><i class="fa-regular fa-circle-info"></i> duplicates omitted</code></h1>
+			<h1>Clips <code>last 30 days</code> <code>limit: 50</code> <code data-tippy-content="Clips created within 10 seconds of each other are classed as duplicates"><i class="fa-regular fa-circle-info"></i> duplicates omitted</code></h1>
 			<div class="clips">
 				{clips.map((clip: any) => (
 					<a href={`/clip-${clip.id}`} class="block">

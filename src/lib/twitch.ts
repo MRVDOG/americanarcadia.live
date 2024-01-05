@@ -104,7 +104,7 @@ export const fetchClips = async (runtime: any) => {
         AND datetime(json_extract(c2.data, "$.created_at")) > datetime(json_extract(clips.data, "$.created_at"), '-10 seconds')
         AND datetime(json_extract(c2.data, "$.created_at")) < datetime(json_extract(clips.data, "$.created_at"), '+10 seconds')
       ) = 0
-      AND json_extract(data, "$.created_at") > datetime('now', '-7 days')
+      AND json_extract(data, "$.created_at") > datetime('now', '-30 days')
     
       ORDER BY json_extract(data, "$.created_at") DESC
       LIMIT 50
