@@ -20,7 +20,6 @@
     "@twurple/auth": "^7.0.6",
     "@twurple/chat": "^7.0.6",
     "astro": "^4.0.6",
-    "js-cloudflare-turnstile-render": "^1.0.1",
     "nanostores": "^0.9.5",
     "tippy.js": "^6.3.7",
     "typescript": "^5.3.3"
