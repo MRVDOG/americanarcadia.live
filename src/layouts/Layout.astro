@@ -34,13 +34,14 @@ const { title } = Astro.props;
 		<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback" defer></script>
 
 		<script>
-			import { initializeClerk } from '../lib/clerk'
-			let turnstile: any;
-			
+			import { initializeClerk } from '../lib/clerk'			
+		</script>
+
+		<script type="module">
 			const onloadTurnstileCallback = function () {
 				turnstile.render('#turnstile', {
 					sitekey: '0x4AAAAAAAP2ddeDpbuqh1DJ',
-						callback: function(token: any) {
+						callback: function(token) {
 						console.log(`Challenge Success ${token}`);
 						initializeClerk();
 					},
