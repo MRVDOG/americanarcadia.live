@@ -33,9 +33,15 @@ const { title } = Astro.props;
 
 		<script>
 			import { initializeClerk } from '../lib/clerk'
-	    initializeClerk();
+			
+			function done() {
+				console.log('Turnstile passed! initializing clerk...');
+				
+				initializeClerk();
+			}
 		</script>
 		
+		<div class="cf-turnstile" data-sitekey="0x4AAAAAAAP2ddeDpbuqh1DJ" data-callback="done"></div>
 	</body>
 </html>
 <style is:global>
