@@ -31,22 +31,15 @@ const { title } = Astro.props;
 
 		<script src="https://kit.fontawesome.com/48be745afa.js" crossorigin="anonymous"></script>
 		<script src="https://player.twitch.tv/js/embed/v1.js" is:inline></script>
-		<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback" defer></script>
 
 		<script>
-			import { initializeClerk } from '../lib/clerk'			
-		</script>
+			import { initializeClerk } from '../lib/clerk';
+			import CloudflareTurnstile from 'js-cloudflare-turnstile-render';
 
-		<script type="module">
-			const onloadTurnstileCallback = function () {
-				turnstile.render('#turnstile', {
-					sitekey: '0x4AAAAAAAP2ddeDpbuqh1DJ',
-						callback: function(token) {
-						console.log(`Challenge Success ${token}`);
-						initializeClerk();
-					},
-				});
-			};
+			new CloudflareTurnstile('0x4AAAAAAAP2ddeDpbuqh1DJ', '#turnstile', (token: string) => {
+				console.log(`Challenge Success ${token}`);
+				initializeClerk();
+			});
 		</script>
 	</body>
 </html>
