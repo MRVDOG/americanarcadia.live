@@ -23,6 +23,7 @@ const { title } = Astro.props;
 		<div class="page">
 			<Header />
 			<content>
+				<div id="turnstile"></div>
 				<slot />
 			</content>
 			<Footer />
@@ -36,7 +37,7 @@ const { title } = Astro.props;
 			import { initializeClerk } from '../lib/clerk'
 			
 			(window as any).onloadTurnstileCallback = function () {
-				(window as any).turnstile.render('#example-container', {
+				(window as any).turnstile.render('#turnstile', {
 					sitekey: '0x4AAAAAAAP2ddeDpbuqh1DJ',
 						callback: function(token: any) {
 						console.log(`Challenge Success ${token}`);
