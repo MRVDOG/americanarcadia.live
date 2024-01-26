@@ -44,11 +44,7 @@ export const fetchStream = async (auth: TwitchAuth, id: string) => {
     }
   });
 
-  let data = null;
-
-  if(response.status === 204) {
-    data = await response.json();
-  }
+  const data = await response.json();
 
   return data;
 }
