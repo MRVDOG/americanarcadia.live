@@ -13,7 +13,6 @@ export const initializeClerk = () => {
     .load()
     .then(() => {
       auth.set(clerk)
-      console.log('Clerk loaded')
     })
     .catch(error => console.error(error))
 }

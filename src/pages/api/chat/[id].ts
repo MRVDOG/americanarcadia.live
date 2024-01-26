@@ -35,7 +35,11 @@ export async function POST({ params, locals, request }: { params: { id: string }
           message: body.message,
         }),
       }).then(res => {
-        console.log(res);
+        if(res.status === 204) {
+          resolve({ sent: true });
+        } else {
+          resolve({ sent: false });
+        }
       });
 
     }
