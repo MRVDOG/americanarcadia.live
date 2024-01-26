@@ -31,7 +31,8 @@ export const fetchStream = async (auth: TwitchAuth, id: string) => {
       data: [{
         type: 'live',
         user_id: id,
-        user_login: 'mrvdog'
+        user_login: 'mrvdog',
+        game_id: '1517558459',
       }]
     };
   }
