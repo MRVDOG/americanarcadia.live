@@ -35,7 +35,7 @@ export async function POST({ params, locals, request }: { params: { id: string }
           message: body.message,
         }),
       }).then(res => {
-        if(res.status === 204) {
+        if(res.status === 200) {
           resolve({ sent: true });
         } else {
           resolve({ sent: false });
@@ -46,8 +46,6 @@ export async function POST({ params, locals, request }: { params: { id: string }
   });
 
   return new Response(
-    JSON.stringify({
-      response,
-    }),
+    JSON.stringify(response),
   )
 }

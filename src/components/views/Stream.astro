@@ -43,17 +43,31 @@
 
       const chat = async () => {
         const message = textarea.value;
-
+        chatInput.classList.remove('error');
+        chatInput.classList.add('loading');
+        
         if (!message) return;
-
-        textarea.value = '';
+        
+        textarea.disabled = true;
 
         await fetch(`/api/chat/${stream.user_id}`, {
           method: 'POST',
           body: JSON.stringify({
             message
           })
-        });
+        }).then(res => res.json())
+          .then((res) => {
+            textarea.disabled = false;
+            chatInput.classList.remove('loading');
+
+            if (!res.sent) {
+              chatInput.classList.add('error');
+              return;
+            }
+
+            textarea.value = '';
+            textarea.focus();
+          });
       };
 
       button.addEventListener('click', chat);
@@ -194,9 +208,26 @@
 
       &:has(:disabled) {
         cursor: not-allowed;
+        opacity: 0.5;
 
         & * {
           cursor: not-allowed;
+        }
+      }
+
+      &.error {
+        outline: 2px solid #e02945;
+        outline-offset: -2px;
+      }
+
+      &.loading {
+        cursor: wait;
+        outline: 2px solid #2844aa;
+        outline-offset: -2px;
+        animation: pulsate 1s ease-in-out infinite;
+
+        & * {
+          cursor: wait;
         }
       }
 
@@ -239,6 +270,18 @@
         }
       }
     }
+  }
+
+  @keyframes pulsate {
+    0% {
+      outline-offset: -2px;
+    }
+    50% {
+      outline-offset: -5px;
+    }
+    100% {
+      outline-offset: -2px;
+    } 
   }
 
   @media (width <= 1024px) {
