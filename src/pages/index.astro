@@ -46,7 +46,7 @@
 ---
 
 <Layout title="American Arcadia • Live">
-	<main>
+	<main v="">
 		{error && (
 			<div class="error">
 				{errors[error]}
@@ -57,13 +57,13 @@
 			<div class="streams">
 				{streams.data.map((stream: any) => (
 					<a href={`/cam-${stream.user_id}`} class="block">
-						<img src={stream.thumbnail_url.replace('{width}', 320).replace('{height}', 180)}></img>
-						<di class="channel-info">
+						<img src={stream.thumbnail_url.replace('{width}', 320).replace('{height}', 180)} />
+						<div class="channel-info">
 							<img src={`https://avatar.gamesight.io/twitch/${stream.user_id}-60x60`} width="50" height="50" />
 							<div class="title">{stream.title}</div>
 							<div class="channel">{stream.user_name}</div>
-						</a>
-					</>
+						</div>
+					</a>
 				))}
 			</div>
 		)}

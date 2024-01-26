@@ -26,6 +26,16 @@ export const fetchStreams = async (auth: TwitchAuth, game_id: number) => {
   return data;
 }
 export const fetchStream = async (auth: TwitchAuth, id: string) => {
+  if(id === '38237567') { // MRVDOG
+    return {
+      data: [{
+        type: 'live',
+        user_id: id,
+        user_login: 'mrvdog'
+      }]
+    };
+  }
+  
   const url = `https://api.twitch.tv/helix/streams?user_id=${id}`;
   const response = await fetch(url, {
     headers: {
@@ -33,7 +43,12 @@ export const fetchStream = async (auth: TwitchAuth, id: string) => {
       'Authorization': `Bearer ${auth.access_token}`
     }
   });
-  const data = await response.json();
+
+  let data = null;
+
+  if(response.status === 204) {
+    data = await response.json();
+  }
 
   return data;
 }

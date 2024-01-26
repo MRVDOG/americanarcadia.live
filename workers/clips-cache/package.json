@@ -1,0 +1,7 @@
+{
+  "name": "aa-clips-cache",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./src/index.js",
+  "module": "./dist/index.js"
+}

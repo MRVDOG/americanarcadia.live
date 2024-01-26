@@ -2,7 +2,7 @@ const json = (data, options) => new Response(JSON.stringify(data), options);
 
 const game_id = 1517558459; // American Arcadia
 
-export const handleAuth = async (env) => {
+const handleAuth = async (env) => {
   const authRes = await fetch(`https://id.twitch.tv/oauth2/token?client_id=${env.TWITCH_CLIENT_ID}&client_secret=${env.TWITCH_CLIENT_SECRET}&grant_type=client_credentials`, {
     method: 'POST'
   });
@@ -11,9 +11,8 @@ export const handleAuth = async (env) => {
   return auth;
 }
 
-export default {
-  async fetch(request, env) {
-    const DB = await env.DATABASE;
+const doTheThing = async (env) => {
+  const DB = await env.DATABASE;
     
     let cursor = null;
     let err = null;
@@ -76,4 +75,12 @@ export default {
       succeeded,
     });
   }
+
+export default {
+  async fetch(_, env) {
+    return await doTheThing(env);
+  },
+  async scheduled(env) {
+    return await doTheThing(env);
+  },
 };

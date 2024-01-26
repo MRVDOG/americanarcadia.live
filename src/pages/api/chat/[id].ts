@@ -1,6 +1,3 @@
-import { StaticAuthProvider } from '@twurple/auth';
-import { ChatClient } from '@twurple/chat';
-
 import { handleAuth, fetchStream } from "../../../lib/twitch";
 import type { AAAccessToken } from '../../../env';
 
@@ -9,7 +6,7 @@ export async function POST({ params, locals, request }: { params: { id: string }
 
   const auth = await handleAuth();
 
-  const {data: [stream]} = await fetchStream(auth, params.id);
+  const {data: [stream]} = (await fetchStream(auth, params.id))
 
   const response = await new Promise(async (resolve, reject) => {
     if (stream.type === 'live') {
@@ -25,26 +22,22 @@ export async function POST({ params, locals, request }: { params: { id: string }
         reject(new Error('invalid token'));
       }
 
-      const authProvider = new StaticAuthProvider(
-        process.env.TWITCH_CLIENT_ID!,
-        locals.accessToken.token,
-        ['user:read:email', 'chat:edit', 'chat:read	'],
-      );
-
-      const chatClient = new ChatClient({ authProvider });
-
-      chatClient.onConnect(async () => {
-        await chatClient.say(stream.user_login, body.message)
-          .catch(err => {
-            reject(err);
-          });
-
-        chatClient.quit();
-
-        resolve({ sent: true });
+      await fetch('https://api.twitch.tv/helix/chat/messages', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${locals.accessToken.token}`,
+          'Client-Id': res.client_id,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          broadcaster_id: stream.user_id,
+          sender_id: res.user_id,
+          message: body.message,
+        }),
+      }).then(res => {
+        console.log(res);
       });
 
-      chatClient.connect();
     }
   });
 
