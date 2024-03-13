@@ -58,22 +58,25 @@ const doTheThing = async (env) => {
 
     for(const row of ins_rows) {
       if(row.success) {
-        // if updated_at is older than 7 days, remove it
-        const clip = JSON.parse(row.data);
-        const updated_at = new Date(clip.created_at).getTime();
-        const now = new Date().getTime();
-        const diff = now - updated_at;
-        const days = diff / (1000 * 60 * 60 * 24);
+        // loop through all clips in the db and remove any that are not in the new list
+        const get_stmt = await DB.prepare('SELECT * FROM clips');
+        const { results: clips_from_db } = await get_stmt.all();
 
-        if(days > 7) {
-          const del_stmt = DB.prepare('DELETE FROM clips WHERE id = ?');
-          const del_row = await DB.run(del_stmt.bind(clip.id));
-          removed++;
+        console.log('clips from db', clips_from_db.length);
+
+        // remove if not in new list or older than 1 month
+        const toRemove = clips_from_db?.filter(clip => !clips.find(c => c.id === clip.id)) || [];
+
+        const del_stmt = DB.prepare('DELETE FROM clips WHERE id = ?');
+        const del_rows = await DB.batch([
+          ...toRemove.map(clip => del_stmt.bind(clip.id))
+        ]);
+
+        if(del_rows.length > 0) {
+          removed = del_rows.length ;
         } else {
-          console.log('clip is not old enough to remove', clip.id, days);
-          succeeded++;
+          succeeded = ins_rows.length;
         }
-
       } else {
         failed++;
       }
